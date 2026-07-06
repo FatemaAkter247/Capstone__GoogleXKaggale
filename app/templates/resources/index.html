@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Resource Management - ResQLink{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div><h2 class="fw-bold mb-1"><i class="bi bi-boxes text-success me-2"></i>Resource Inventory</h2>
+    <p class="text-muted mb-0">Track and manage emergency supplies and equipment.</p></div>
+    {% if session.get('role') in ['Shelter Admin','System Admin'] %}
+    <a href="{{ url_for('resources.add') }}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Add Resource</a>
+    {% endif %}
+</div>
+{% set categories = ['Water','Food','Medicine','Equipment','Clothing'] %}
+{% for cat in categories %}
+{% set cat_resources = resources|selectattr('category','equalto',cat)|list %}
+{% if cat_resources %}
+<h5 class="fw-bold mt-4 mb-3 text-primary"><i class="bi bi-{% if cat=='Water' %}droplet{% elif cat=='Food' %}basket{% elif cat=='Medicine' %}capsule{% elif cat=='Equipment' %}tools{% else %}bag{% endif %} me-2"></i>{{ cat }}</h5>
+<div class="row g-3 mb-2">
+{% for r in cat_resources %}
+<div class="col-md-4">
+    <div class="card glass-card border-0 p-3 h-100">
+        <div class="d-flex justify-content-between mb-2">
+            <h6 class="fw-bold mb-0">{{ r.name }}</h6>
+            <span class="badge {% if r.quantity < 10 %}bg-danger{% elif r.quantity < 50 %}bg-warning text-dark{% else %}bg-success{% endif %}">{{ r.quantity }} {{ r.unit }}</span>
+        </div>
+        {% if r.shelter_name %}<p class="text-muted small mb-2"><i class="bi bi-house me-1"></i>{{ r.shelter_name }}</p>{% endif %}
+        {% if session.get('role') in ['Shelter Admin','System Admin'] %}
+        <form method="POST" action="{{ url_for('resources.update', id=r.id) }}" class="d-flex gap-2 mt-auto pt-2 border-top">
+            <input type="number" name="quantity" class="form-control form-control-sm" value="{{ r.quantity }}" min="0">
+            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-check"></i></button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+{% if not resources %}
+<div class="text-center py-5 text-muted"><i class="bi bi-boxes fs-1"></i><p class="mt-3">No resources logged yet.</p></div>
+{% endif %}
+{% endblock %}

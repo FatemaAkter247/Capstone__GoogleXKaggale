@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Rescue Requests - ResQLink{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div><h2 class="fw-bold mb-1"><i class="bi bi-truck text-danger me-2"></i>Rescue Requests</h2>
+    <p class="text-muted mb-0">Manage and prioritize incoming emergency rescue requests.</p></div>
+    {% if session.get('role') == 'Citizen' %}
+    <a href="{{ url_for('citizen.request_rescue') }}" class="btn btn-danger"><i class="bi bi-exclamation-triangle me-2"></i>New Request</a>
+    {% endif %}
+</div>
+{% if requests %}
+<div class="card glass-card border-0 p-4">
+<div class="table-responsive">
+<table class="table align-middle">
+    <thead class="table-light">
+        <tr><th>#</th><th>Citizen</th><th>Location</th><th>Details</th><th>Priority</th><th>Status</th>
+        {% if session.get('role') in ['Rescue Team','System Admin'] %}<th>Update</th>{% endif %}</tr>
+    </thead>
+    <tbody>
+    {% for r in requests %}
+    <tr>
+        <td class="text-muted small">{{ r.id }}</td>
+        <td><strong>{{ r.username }}</strong></td>
+        <td>{{ r.location }}</td>
+        <td class="text-muted small" style="max-width:200px;">{{ r.details[:80] }}{% if r.details|length > 80 %}…{% endif %}</td>
+        <td><span class="badge {% if r.priority=='Critical' %}bg-danger{% elif r.priority=='High' %}bg-warning text-dark{% elif r.priority=='Medium' %}bg-info{% else %}bg-secondary{% endif %}">{{ r.priority }}</span></td>
+        <td><span class="badge rounded-pill {% if r.status=='Pending' %}bg-light text-dark border{% elif r.status=='In Progress' %}bg-primary{% elif r.status=='Resolved' %}bg-success{% else %}bg-secondary{% endif %}">{{ r.status }}</span></td>
+        {% if session.get('role') in ['Rescue Team','System Admin'] %}
+        <td>
+            <form method="POST" action="{{ url_for('rescue.update', id=r.id) }}" class="d-flex gap-1">
+                <select name="status" class="form-select form-select-sm" style="width:130px">
+                    <option {% if r.status=='Pending' %}selected{% endif %}>Pending</option>
+                    <option {% if r.status=='In Progress' %}selected{% endif %}>In Progress</option>
+                    <option {% if r.status=='Resolved' %}selected{% endif %}>Resolved</option>
+                    <option {% if r.status=='Canceled' %}selected{% endif %}>Canceled</option>
+                </select>
+                <select name="priority" class="form-select form-select-sm" style="width:110px">
+                    <option {% if r.priority=='Low' %}selected{% endif %}>Low</option>
+                    <option {% if r.priority=='Medium' %}selected{% endif %}>Medium</option>
+                    <option {% if r.priority=='High' %}selected{% endif %}>High</option>
+                    <option {% if r.priority=='Critical' %}selected{% endif %}>Critical</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-check"></i></button>
+            </form>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div></div>
+{% else %}
+<div class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1"></i><p class="mt-3">No rescue requests found.</p></div>
+{% endif %}
+{% endblock %}

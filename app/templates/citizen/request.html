@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Emergency - ResQLink{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card glass-card border-0 p-4 shadow">
+            <div class="card-body">
+                <div class="mb-4">
+                    <a href="{{ url_for('citizen.dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                    <h2 class="fw-bold"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Report Emergency Incident</h2>
+                    <p class="text-muted">Provide critical details to dispatch the rescue team and recommend shelters.</p>
+                </div>
+
+                <form method="POST">
+                    <!-- Location description -->
+                    <div class="mb-3">
+                        <label for="location" class="form-label fw-semibold">Location / Address <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-geo-alt-fill text-muted"></i></span>
+                            <input type="text" class="form-control bg-light" id="location" name="location" placeholder="e.g. 123 Main St, Near Community Park" required value="{{ request.form['location'] or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Coordinates (Optional) -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="latitude" class="form-label fw-semibold">Latitude (Optional)</label>
+                            <input type="number" step="any" class="form-control bg-light" id="latitude" name="latitude" placeholder="e.g. 23.8103" value="{{ request.form['latitude'] or '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="longitude" class="form-label fw-semibold">Longitude (Optional)</label>
+                            <input type="number" step="any" class="form-control bg-light" id="longitude" name="longitude" placeholder="e.g. 90.4125" value="{{ request.form['longitude'] or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Emergency Details -->
+                    <div class="mb-4">
+                        <label for="details" class="form-label fw-semibold">Emergency Details / Needs <span class="text-danger">*</span></label>
+                        <textarea class="form-control bg-light" id="details" name="details" rows="5" placeholder="Please describe the emergency. Specify if anyone is injured, trapped, or needs immediate medical attention, and highlight priority resource needs (food, water, medicine, transport)." required>{{ request.form['details'] or '' }}</textarea>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="{{ url_for('citizen.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-send-fill me-2"></i>Submit Emergency Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

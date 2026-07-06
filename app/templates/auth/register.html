@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - ResQLink{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card glass-card border-0 p-4 shadow">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;"></i>
+                    <h2 class="fw-bold mt-2">Create Account</h2>
+                    <p class="text-muted small">Join ResQLink to access disaster tools and support</p>
+                </div>
+                
+                <form method="POST">
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                            <input type="text" class="form-control bg-light border-start-0" id="username" name="username" placeholder="Choose a username" value="{{ request.form['username'] or '' }}" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                            <input type="email" class="form-control bg-light border-start-0" id="email" name="email" placeholder="name@example.com" value="{{ request.form['email'] or '' }}" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                            <input type="password" class="form-control bg-light border-start-0" id="password" name="password" placeholder="Create a password" required>
+                        </div>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="mb-4">
+                        <label for="role" class="form-label fw-semibold">Account Role</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-muted"></i></span>
+                            <select class="form-select bg-light border-start-0" id="role" name="role" required>
+                                <option value="" disabled {{ 'selected' if not request.form['role'] }}>Select your role...</option>
+                                {% for role in roles %}
+                                    <option value="{{ role }}" {{ 'selected' if request.form['role'] == role }}>{{ role }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-text text-muted small mt-1">
+                            <i class="bi bi-info-circle me-1"></i>Ensure you register under the correct agency or role.
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-gradient py-2">
+                            <i class="bi bi-check-circle-fill me-2"></i>Register
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="text-muted">
+
+                <div class="text-center mt-3">
+                    <p class="mb-0 text-muted small">
+                        Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="text-primary fw-semibold text-decoration-none">Log In here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

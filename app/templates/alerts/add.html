@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Post Alert - ResQLink{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7">
+<div class="card glass-card border-0 p-4 shadow">
+    <a href="{{ url_for('alerts.index') }}" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    <h3 class="fw-bold mb-4"><i class="bi bi-megaphone-fill text-warning me-2"></i>Post Disaster Alert</h3>
+    <form method="POST">
+        <div class="mb-3"><label class="form-label fw-semibold">Alert Title</label>
+        <input type="text" name="title" class="form-control" placeholder="e.g. Flash Flood Warning" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Description</label>
+        <textarea name="description" class="form-control" rows="4" placeholder="Describe the situation and instructions..." required></textarea></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Severity Level</label>
+        <select name="severity" class="form-select" required>
+            <option>Watch</option><option>Warning</option><option>Critical</option>
+        </select></div>
+        <div class="mb-4"><label class="form-label fw-semibold">Affected Area</label>
+        <input type="text" name="area" class="form-control" placeholder="e.g. Downtown, Eastside District" required></div>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('alerts.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-warning text-dark fw-bold px-4"><i class="bi bi-broadcast me-2"></i>Publish Alert</button>
+        </div>
+    </form>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Add Resource - ResQLink{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7">
+<div class="card glass-card border-0 p-4 shadow">
+    <a href="{{ url_for('resources.index') }}" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    <h3 class="fw-bold mb-4"><i class="bi bi-box-seam text-success me-2"></i>Add Resource</h3>
+    <form method="POST">
+        <div class="mb-3"><label class="form-label fw-semibold">Resource Name</label>
+        <input type="text" name="name" class="form-control" required></div>
+        <div class="row mb-3">
+            <div class="col-md-6"><label class="form-label fw-semibold">Category</label>
+            <select name="category" class="form-select" required>
+                <option>Water</option><option>Food</option><option>Medicine</option><option>Equipment</option><option>Clothing</option>
+            </select></div>
+            <div class="col-md-3"><label class="form-label fw-semibold">Quantity</label>
+            <input type="number" name="quantity" class="form-control" min="0" required></div>
+            <div class="col-md-3"><label class="form-label fw-semibold">Unit</label>
+            <input type="text" name="unit" class="form-control" placeholder="e.g. liters"></div>
+        </div>
+        <div class="mb-4"><label class="form-label fw-semibold">Assign to Shelter (optional)</label>
+        <select name="shelter_id" class="form-select">
+            <option value="">-- No specific shelter --</option>
+            {% for s in shelters %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+        </select></div>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('resources.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle me-2"></i>Add Resource</button>
+        </div>
+    </form>
+</div></div></div>
+{% endblock %}

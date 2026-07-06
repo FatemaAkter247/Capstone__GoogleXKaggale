@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Disaster Alerts - ResQLink{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div><h2 class="fw-bold mb-1"><i class="bi bi-megaphone-fill text-warning me-2"></i>Disaster Alerts</h2>
+    <p class="text-muted mb-0">Live active alerts and warnings for your region.</p></div>
+    {% if session.get('role') == 'System Admin' %}
+    <a href="{{ url_for('alerts.add') }}" class="btn btn-warning text-dark fw-bold"><i class="bi bi-broadcast me-2"></i>Post Alert</a>
+    {% endif %}
+</div>
+
+{% if active_alerts %}
+<h5 class="fw-bold text-danger mb-3"><i class="bi bi-activity me-1"></i>Active Alerts ({{ active_alerts|length }})</h5>
+<div class="row g-3 mb-5">
+{% for alert in active_alerts %}
+<div class="col-md-6">
+    <div class="card border-0 p-4 shadow-sm border-start border-4 {% if alert.severity=='Critical' %}border-danger{% elif alert.severity=='Warning' %}border-warning{% else %}border-info{% endif %}">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="fw-bold mb-0">{{ alert.title }}</h5>
+            <span class="badge {% if alert.severity=='Critical' %}bg-danger{% elif alert.severity=='Warning' %}bg-warning text-dark{% else %}bg-info{% endif %}">{{ alert.severity }}</span>
+        </div>
+        <p class="text-muted mb-2">{{ alert.description }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ alert.area }}</small>
+            {% if session.get('role') == 'System Admin' %}
+            <a href="{{ url_for('alerts.deactivate', id=alert.id) }}" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Archive this alert?')">Archive</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="alert alert-success border-0 shadow-sm"><i class="bi bi-check-circle-fill me-2"></i>No active alerts at this time. All areas are safe.</div>
+{% endif %}
+
+{% if archived_alerts %}
+<h5 class="fw-bold text-muted mb-3"><i class="bi bi-archive me-1"></i>Archived Alerts</h5>
+<div class="card glass-card border-0 p-3">
+{% for alert in archived_alerts %}
+<div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+    <div><strong class="text-muted">{{ alert.title }}</strong> <span class="badge bg-light text-dark border ms-2">{{ alert.severity }}</span>
+    <small class="d-block text-muted">{{ alert.area }}</small></div>
+    <small class="text-muted">{{ alert.created_at }}</small>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

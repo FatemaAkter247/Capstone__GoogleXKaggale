@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Add Shelter - ResQLink{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7">
+<div class="card glass-card border-0 p-4 shadow">
+    <a href="{{ url_for('shelter.index') }}" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    <h3 class="fw-bold mb-4"><i class="bi bi-house-add me-2 text-primary"></i>Register New Shelter</h3>
+    <form method="POST">
+        <div class="mb-3"><label class="form-label fw-semibold">Shelter Name</label>
+        <input type="text" name="name" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Location / Address</label>
+        <input type="text" name="location" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Maximum Capacity</label>
+        <input type="number" name="capacity" class="form-control" min="1" required></div>
+        <div class="row mb-4">
+            <div class="col-md-6"><label class="form-label fw-semibold">Latitude (optional)</label>
+            <input type="number" step="any" name="latitude" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label fw-semibold">Longitude (optional)</label>
+            <input type="number" step="any" name="longitude" class="form-control"></div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('shelter.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-gradient px-4"><i class="bi bi-check-circle me-2"></i>Add Shelter</button>
+        </div>
+    </form>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - ResQLink{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold"><i class="bi bi-shield-shaded text-primary me-2"></i>System Admin Dashboard</h2>
+    <p class="text-muted">Full system overview — users, requests, shelters, alerts, and resources.</p>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-5">
+    {% set stat_cards = [
+        ('bi-people-fill','text-primary','bg-primary','Total Users', stats.total_users),
+        ('bi-exclamation-triangle-fill','text-danger','bg-danger','Pending Requests', stats.pending_requests),
+        ('bi-fire','text-warning','bg-warning','Critical Requests', stats.critical_requests),
+        ('bi-megaphone-fill','text-info','bg-info','Active Alerts', stats.active_alerts),
+        ('bi-house-fill','text-success','bg-success','Open Shelters', stats.open_shelters),
+        ('bi-list-task','text-secondary','bg-secondary','Total Requests', stats.total_requests)
+    ] %}
+    {% for icon, textcls, bgcls, label, val in stat_cards %}
+    <div class="col-6 col-lg-2">
+        <div class="card glass-card border-0 text-center p-3 h-100">
+            <div class="{{ textcls }} mb-1"><i class="bi {{ icon }} fs-3"></i></div>
+            <h3 class="fw-bold m-0">{{ val }}</h3>
+            <small class="text-muted">{{ label }}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Role Breakdown -->
+    <div class="col-md-4">
+        <div class="card glass-card border-0 p-4 h-100">
+            <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart me-2 text-primary"></i>Users by Role</h5>
+            {% for label, val, cls in [('Citizens', stats.citizens, 'primary'),('Rescue Teams', stats.rescue_team, 'success'),('Shelter Admins', stats.shelter_admins, 'warning')] %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">{{ label }}</span>
+                <span class="badge bg-{{ cls }} rounded-pill">{{ val }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Active Alerts -->
+    <div class="col-md-8">
+        <div class="card glass-card border-0 p-4 h-100">
+            <div class="d-flex justify-content-between mb-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-megaphone me-2 text-warning"></i>Latest Alerts</h5>
+                <a href="{{ url_for('alerts.add') }}" class="btn btn-sm btn-warning text-dark">Post Alert</a>
+            </div>
+            {% for alert in alerts %}
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div><strong>{{ alert.title }}</strong>
+                <span class="badge {% if alert.severity=='Critical' %}bg-danger{% elif alert.severity=='Warning' %}bg-warning text-dark{% else %}bg-info{% endif %} ms-2">{{ alert.severity }}</span>
+                <small class="d-block text-muted">{{ alert.area }}</small></div>
+                <span class="badge {% if alert.is_active %}bg-success{% else %}bg-secondary{% endif %}">{% if alert.is_active %}Active{% else %}Archived{% endif %}</span>
+            </div>
+            {% else %}
+            <p class="text-muted mt-2">No alerts posted yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Rescue Requests -->
+<div class="card glass-card border-0 p-4 mb-5">
+    <div class="d-flex justify-content-between mb-3">
+        <h5 class="fw-bold mb-0"><i class="bi bi-truck me-2 text-danger"></i>Recent Rescue Requests</h5>
+        <a href="{{ url_for('rescue.index') }}" class="btn btn-sm btn-outline-danger">View All</a>
+    </div>
+    <div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead class="table-light"><tr><th>ID</th><th>Citizen</th><th>Location</th><th>Priority</th><th>Status</th><th>Submitted</th></tr></thead>
+        <tbody>
+        {% for r in recent_requests %}
+        <tr>
+            <td>#{{ r.id }}</td><td><strong>{{ r.username }}</strong></td><td>{{ r.location }}</td>
+            <td><span class="badge {% if r.priority=='Critical' %}bg-danger{% elif r.priority=='High' %}bg-warning text-dark{% elif r.priority=='Medium' %}bg-info{% else %}bg-secondary{% endif %}">{{ r.priority }}</span></td>
+            <td><span class="badge rounded-pill {% if r.status=='Pending' %}bg-light text-dark border{% elif r.status=='In Progress' %}bg-primary{% elif r.status=='Resolved' %}bg-success{% else %}bg-secondary{% endif %}">{{ r.status }}</span></td>
+            <td class="text-muted small">{{ r.created_at }}</td>
+        </tr>
+        {% else %}<tr><td colspan="6" class="text-center text-muted">No requests yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<!-- Registered Users -->
+<div class="card glass-card border-0 p-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-people me-2 text-primary"></i>All Registered Users</h5>
+    <div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead class="table-light"><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+        <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td><strong>{{ u.username }}</strong></td>
+            <td class="text-muted">{{ u.email }}</td>
+            <td><span class="role-badge role-{{ u.role.split()[0].lower() }}">{{ u.role }}</span></td>
+            <td class="text-muted small">{{ u.created_at }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}
